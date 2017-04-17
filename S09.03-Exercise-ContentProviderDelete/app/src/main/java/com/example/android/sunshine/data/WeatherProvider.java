@@ -293,7 +293,7 @@ public class WeatherProvider extends ContentProvider {
         return cursor;
     }
 
-//  TODO (1) Implement the delete method of the ContentProvider
+//  DONE (1) Implement the delete method of the ContentProvider
     /**
      * Deletes data at a given URI with optional arguments for more fine tuned deletions.
      *
@@ -304,11 +304,21 @@ public class WeatherProvider extends ContentProvider {
      */
     @Override
     public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
-        throw new RuntimeException("Student, you need to implement the delete method!");
+        SQLiteDatabase db =mOpenHelper.getWritableDatabase();
 
-//          TODO (2) Only implement the functionality, given the proper URI, to delete ALL rows in the weather table
+        int match = sUriMatcher.match(uri);
+        int rowsDeleted;
+        switch(match){
+            case CODE_WEATHER: rowsDeleted =  db.delete(WeatherContract.WeatherEntry.TABLE_NAME,null,null);
+                break;
+            default: throw new RuntimeException("URI doesnot match");
+        }
 
-//      TODO (3) Return the number of rows deleted
+        getContext().getContentResolver().notifyChange(uri,null);
+        return rowsDeleted;
+        //          DONE (2) Only implement the functionality, given the proper URI, to delete ALL rows in the weather table
+
+//      DONE (3) Return the number of rows deleted
     }
 
     /**
