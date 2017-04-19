@@ -18,9 +18,15 @@ package com.example.android.sunshine.sync;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.support.v7.preference.PreferenceManager;
+import android.text.format.DateUtils;
 
+import com.example.android.sunshine.R;
+import com.example.android.sunshine.data.SunshinePreferences;
 import com.example.android.sunshine.data.WeatherContract;
 import com.example.android.sunshine.utilities.NetworkUtils;
+import com.example.android.sunshine.utilities.NotificationUtils;
 import com.example.android.sunshine.utilities.OpenWeatherJsonUtils;
 
 import java.net.URL;
@@ -73,11 +79,18 @@ public class SunshineSyncTask {
                         WeatherContract.WeatherEntry.CONTENT_URI,
                         weatherValues);
 
-//              TODO (13) Check if notifications are enabled
+//              DONE (13) Check if notifications are enabled
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+                boolean showNotification = sharedPreferences.getBoolean(context.getString(R.string.pref_enable_notifications_key),context.getResources().getBoolean(R.bool.show_notification_by_default));
+                long currTime = System.currentTimeMillis();
+                long lastNotificationTime = SunshinePreferences.getEllapsedTimeSinceLastNotification(context);
+                if(showNotification && lastNotificationTime >= DateUtils.DAY_IN_MILLIS){
+                    NotificationUtils.notifyUserOfNewWeather(context);
+                }
 
-//              TODO (14) Check if a day has passed since the last notification
+//              DONE (14) Check if a day has passed since the last notification
 
-//              TODO (15) If more than a day have passed and notifications are enabled, notify the user
+//              DONE (15) If more than a day have passed and notifications are enabled, notify the user
 
             /* If the code reaches this point, we have successfully performed our sync */
 
